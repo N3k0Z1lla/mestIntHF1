@@ -6,12 +6,12 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
     	int bestCol = 3;
-    	int depth = 9;
+    	int depth = 10;
     	var maxEval = Integer.MIN_VALUE;
 		for(int s : board.getValidSteps()) {
 			Board b = new Board(board);
 			b.step(playerIndex, s);
-			int eval = minimax(b, depth - 1 , 3 - playerIndex);
+			int eval = minimax(b, depth - 1 , 3 - playerIndex, Integer.MIN_VALUE, Integer.MAX_VALUE);
 			if(maxEval < eval) {
 				maxEval = eval;
 				bestCol = s;
@@ -20,13 +20,9 @@ public class StudentPlayer extends Player{
 		return bestCol;
     }
     
-    private int minimax(Board board, int depth, int playerIndex) {
+    private int minimax(Board board, int depth, int playerIndex, int alpha, int beta) {
     	if(depth == 0 || board.gameEnded()) {
     		var eval = eval(board, playerIndex);
-//    		for(int i = 0; i < 8-depth; i++) {
-//    			System.out.print("# ");
-//    		}
-//    		System.out.println(eval);
     		return eval;
     	}
     	if(playerIndex == 2) {
@@ -34,26 +30,27 @@ public class StudentPlayer extends Player{
     		for(int s : board.getValidSteps()) {
     			Board b = new Board(board);
     			b.step(playerIndex, s);
-    			int eval = minimax(b, depth - 1 , 3 - playerIndex);
+    			int eval = minimax(b, depth - 1 , 3 - playerIndex, alpha, beta);
     			maxEval = Math.max(eval, maxEval);
+    			alpha = Math.max(alpha, eval);
+    			if(beta <= alpha) {
+    				break;
+    			}
+    			
     		}
-//    		for(int i = 0; i < 8-depth; i++) {
-//    			System.out.print("# ");
-//    		}
-//    		System.out.println(maxEval);
     		return maxEval;
     	} else {
     		var minEval = Integer.MAX_VALUE;
     		for(int s : board.getValidSteps()) {
     			Board b = new Board(board);
     			b.step(playerIndex, s);
-    			int eval = minimax(b, depth - 1 , 3 - playerIndex);
+    			int eval = minimax(b, depth - 1 , 3 - playerIndex, alpha, beta);
     			minEval = Math.min(eval, minEval);
+    			beta = Math.min(beta, eval);
+    			if(beta <= alpha) {
+    				break;
+    			}
     		}
-//    		for(int i = 0; i < 8-depth; i++) {
-//    			System.out.print("# ");
-//    		}
-//    		System.out.println(minEval);
     		return minEval;
     	}
     }
@@ -65,10 +62,8 @@ public class StudentPlayer extends Player{
     		enemyIndex = 1;
     	}
     	if(b.getWinner() == this.playerIndex) {
-    		//System.out.println("nyomjad pillanat van");
     		return 1000;
     	} else if (b.getWinner() == enemyIndex) {
-    		//System.out.println("1/nyomjad pillanat van");
     		return -1000;
     	} else {
     		if(b.getWinner() == 0) {
