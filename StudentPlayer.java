@@ -22,8 +22,7 @@ public class StudentPlayer extends Player{
     
     private int minimax(Board board, int depth, int playerIndex, int alpha, int beta) {
     	if(depth == 0 || board.gameEnded()) {
-    		var eval = eval(board, playerIndex);
-    		return eval;
+    		return eval(board);
     	}
     	if(playerIndex == 2) {
     		var maxEval = Integer.MIN_VALUE;
@@ -54,29 +53,81 @@ public class StudentPlayer extends Player{
     		return minEval;
     	}
     }
-    private int eval(Board b, int pi) {
-    	int enemyIndex;
-    	if(this.playerIndex == 1) {
-    		enemyIndex = 2;
-    	} else {
-    		enemyIndex = 1;
-    	}
-    	if(b.getWinner() == this.playerIndex) {
-    		return 1000;
-    	} else if (b.getWinner() == enemyIndex) {
-    		return -1000;
-    	} else {
-    		if(b.getWinner() == 0) {
-    			return 1;
-    		} else {
-    			return -1;
-    		}
-    	}
+    private int eval(Board b) {
+    	int enemyIndex = 3 - playerIndex;
+    	var currState = b.getState();
+    	var winner = b.getWinner();
+    	if(winner == this.playerIndex) {
+    		return 10000;
+    	} else if (winner == enemyIndex) {
+    		return -10000;
+    	} else if(winner == 0) {
+    			return 0;
+		} else {
+		    int gotem = 0;
+		    for (int i = 0; i < 6; i++)
+		        for (int j = 0; j < 7; j++)
+		            if (currState[i][j] == playerIndex)
+		            	gotem += usefulnessTable[i][j];
+		            else if (currState[i][j] == enemyIndex)
+		            	gotem -= usefulnessTable[i][j];
+		    return 138 + gotem;
+			
+			
+			
+			/*
+			int gotem = 0;
+			for(int i = 0; i < 6; i++) {
+				for(int j = 0; j < 4; j++) {
+					if(currState[i][j] == 0 && currState[i][j+1] == enemyIndex && currState[i][j+2] == enemyIndex && currState[i][j+3] == 0 ) {
+						gotem -= 249;
+					}
+					if(currState[i][j] == 0 && currState[i][j+1] == playerIndex && currState[i][j+2] == playerIndex && currState[i][j+3] == 0 ) {
+						gotem += 249;
+					}
+				}
+			}
+			for(int i = 0; i < 3; i++) {
+				for(int j = 0; j < 7; j++) {
+					if(currState[i][j] == 0 && currState[i+1][j] == enemyIndex && currState[i+2][j] == enemyIndex && currState[i+3][j] == 0 ) {
+						gotem -= 249;
+					}
+					if(currState[i][j] == 0 && currState[i+1][j] == playerIndex && currState[i+2][j] == playerIndex && currState[i+3][j] == 0 ) {
+						gotem += 249;
+					}
+				}
+			}
+			
+			for(int i = 0; i < 3; i++) {
+				for(int j = 0; j < 4; j++) {
+					if(currState[i][j] == 0 && currState[i+1][j+1] == enemyIndex && currState[i+2][j+2] == enemyIndex && currState[i+3][j+3] == 0 ) {
+						gotem -= 249;
+					}
+					if(currState[i][j] == 0 && currState[i+1][j+1] == playerIndex && currState[i+2][j+2] == playerIndex && currState[i+3][j+3] == 0 ) {
+						gotem += 249;
+					}
+				}
+			}
+			for(int i = 0; i < 3; i++) {
+				for(int j = 6; j > 4; j--) {
+					if(currState[i][j] == 0 && currState[i+1][j-1] == enemyIndex && currState[i+2][j-2] == enemyIndex && currState[i+3][j-3] == 0 ) {
+						gotem -= 249;
+					}
+					if(currState[i][j] == 0 && currState[i+1][j-1] == playerIndex && currState[i+2][j-2] == playerIndex && currState[i+3][j-3] == 0 ) {
+						gotem += 249;
+					}
+				}
+			}
+			return gotem;*/
+		
+		}
+    	
     }
+    private int[][] usefulnessTable = 
+		{{3, 4, 5, 7, 5, 4, 3}, 
+        {4, 6, 8, 10, 8, 6, 4},
+        {5, 8, 11, 13, 11, 8, 5}, 
+        {5, 8, 11, 13, 11, 8, 5},
+        {4, 6, 8, 10, 8, 6, 4},
+        {3, 4, 5, 7, 5, 4, 3}};
 }
-
-
-
-
-
-
