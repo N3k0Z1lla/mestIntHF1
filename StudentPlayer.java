@@ -1,4 +1,12 @@
 public class StudentPlayer extends Player{
+	private int[][] usefulnessTable = 
+		{{3, 4, 5, 7, 5, 4, 3}, 
+        {4, 6, 8, 10, 8, 6, 4},
+        {5, 8, 11, 13, 11, 8, 5}, 
+        {5, 8, 11, 13, 11, 8, 5},
+        {4, 6, 8, 10, 8, 6, 4},
+        {3, 4, 5, 7, 5, 4, 3}};
+	
     public StudentPlayer(int playerIndex, int[] boardSize, int nToConnect) {
         super(playerIndex, boardSize, nToConnect);
     }
@@ -6,7 +14,7 @@ public class StudentPlayer extends Player{
     @Override
     public int step(Board board) {
     	int bestCol = 3;
-    	int depth = 10;
+    	int depth = 11;
     	var maxEval = Integer.MIN_VALUE;
 		for(int s : board.getValidSteps()) {
 			Board b = new Board(board);
@@ -58,20 +66,23 @@ public class StudentPlayer extends Player{
     	var currState = b.getState();
     	var winner = b.getWinner();
     	if(winner == this.playerIndex) {
-    		return 10000;
+    		return 1000;
     	} else if (winner == enemyIndex) {
-    		return -10000;
+    		return -1000;
     	} else if(winner == 0) {
     			return 0;
 		} else {
 		    int gotem = 0;
-		    for (int i = 0; i < 6; i++)
-		        for (int j = 0; j < 7; j++)
-		            if (currState[i][j] == playerIndex)
-		            	gotem += usefulnessTable[i][j];
-		            else if (currState[i][j] == enemyIndex)
-		            	gotem -= usefulnessTable[i][j];
-		    return 138 + gotem;
+		    for (int i = 0; i < 6; i++) {
+		    	for (int j = 0; j < 7; j++) {
+		    		if (currState[i][j] == playerIndex) {
+		    			gotem += usefulnessTable[i][j];
+		    		} else if (currState[i][j] == enemyIndex) {
+		    			gotem -= usefulnessTable[i][j];
+		    		}
+		        }
+		    }       	
+		    return gotem;
 			
 			
 			
@@ -119,15 +130,6 @@ public class StudentPlayer extends Player{
 				}
 			}
 			return gotem;*/
-		
 		}
-    	
     }
-    private int[][] usefulnessTable = 
-		{{3, 4, 5, 7, 5, 4, 3}, 
-        {4, 6, 8, 10, 8, 6, 4},
-        {5, 8, 11, 13, 11, 8, 5}, 
-        {5, 8, 11, 13, 11, 8, 5},
-        {4, 6, 8, 10, 8, 6, 4},
-        {3, 4, 5, 7, 5, 4, 3}};
 }
